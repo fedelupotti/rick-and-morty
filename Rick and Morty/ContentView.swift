@@ -1,13 +1,7 @@
-//
-//  ContentView.swift
-//  Rick and Morty
-//
-//  Created by Federico Lupotti on 11/02/25.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    private let homeVM = HomeViewModel()
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -15,7 +9,6 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, worlda!")
         }
-        .padding()
     }
 }
 
