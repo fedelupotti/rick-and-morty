@@ -1,6 +1,16 @@
 import Foundation
 
+protocol NetworkService {
+    func fetchData(url: URL) async throws -> Data
+}
+
 final class APIService {
+    
+    private let networkService: NetworkService
+    
+    init(networkService: NetworkService = URLSession.shared) {
+        self.networkService = networkService
+    }
     
     func fetchCharacters(with parameters: CharacterQueryParameters = .init()) async throws -> CharactersResponseModel {
         var components = URLComponents()
@@ -14,11 +24,7 @@ final class APIService {
         }
         
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-                throw URLError(.badServerResponse)
-            }
+            let data = try await networkService.fetchData(url: url)
             
             let decoder = JSONDecoder()
             return try decoder.decode(CharactersResponseModel.self, from: data)
@@ -26,5 +32,15 @@ final class APIService {
         catch {
             throw error
         }
+    }
+}
+
+extension URLSession: NetworkService {
+    func fetchData(url: URL) async throws -> Data {
+        let (data, response) = try await data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        return data
     }
 }
