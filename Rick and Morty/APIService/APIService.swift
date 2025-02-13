@@ -30,6 +30,7 @@ final class APIService {
             return try decoder.decode(CharactersResponseModel.self, from: data)
         }
         catch {
+            print(error.localizedDescription)
             throw error
         }
     }

@@ -3,12 +3,23 @@ import Foundation
 struct CharactersResponseModel: Decodable {
     let info: Metadata?
     let results: [CharacterResponseModel]?
+    
+    func toCharacters() -> [Character] {
+        let characters: [Character] = results?.compactMap {
+            $0.toCharacter()
+        } ?? []
+        return characters
+    }
 }
 
 struct Metadata: Decodable {
     let count: Int?
     let pages: Int?
     let next: String?
+    
+    func isLastPage() -> Bool {
+        next == nil
+    }
 }
 
 struct CharacterResponseModel: Decodable {
@@ -24,6 +35,28 @@ struct CharacterResponseModel: Decodable {
     let episode: [String]?
     let url: String?
     let created: String?
+    
+    func toCharacter() -> Character? {
+        guard let id, let name, let status else { return nil }
+        
+        return Character(
+            id: id,
+            name: name,
+            status: status,
+            species: species ?? "",
+            type: type ?? "",
+            gender: gender ?? ""
+        )
+    }
+}
+
+struct Character: Identifiable {
+    let id: Int
+    let name: String
+    let status: String
+    let species: String
+    let type: String
+    let gender: String
 }
 
 struct Origin: Decodable {
