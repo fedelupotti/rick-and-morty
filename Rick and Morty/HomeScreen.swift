@@ -5,30 +5,49 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(homeViewModel.characters) { character in
-                    HStack(alignment: .center) {
-                        Text(character.name)
-                        
-                        Spacer()
-                        
-                        AsyncImage(url: URL(string: character.image)) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                        } placeholder: {
-                            ProgressView()
+            TabView {
+                List {
+                    ForEach(homeViewModel.characters) { character in
+                        HStack(alignment: .center) {
+                            Text(character.name)
+                            
+                            Spacer()
+                            
+                            AsyncImage(url: URL(string: character.image)) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(width: 50, height: 50)
                         }
-                        .frame(width: 50, height: 50)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(action: homeViewModel.favoriteGesture, label: {
+                                Image(systemName: "star")
+                                    .resizable()
+                                    .tint(character.isFavorite ? .yellow : nil)
+                            })
+                        }
                     }
+                    
+                    paginationFooter()
                 }
-                paginationFooter()
-            }
-            .onAppear {
-                homeViewModel.getAllCharacters()
+                .onAppear {
+                    homeViewModel.getAllCharacters()
+                }
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+                Text("Some Text")
+                    .tabItem {
+                        Label("Favorites", systemImage: "star.fill")
+                    }
+                
             }
             .navigationTitle("Rick and Morty")
+
         }
     }
 

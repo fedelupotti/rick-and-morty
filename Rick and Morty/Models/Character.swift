@@ -46,7 +46,8 @@ struct CharacterResponseModel: Decodable {
             species: species ?? "",
             type: type ?? "",
             gender: gender ?? "",
-            image: image ?? ""
+            image: image ?? "",
+            isFavorite: false
         )
     }
 }
@@ -59,6 +60,8 @@ struct Character: Identifiable {
     let type: String
     let gender: String
     let image: String
+
+    var isFavorite: Bool
 }
 
 struct Origin: Decodable {

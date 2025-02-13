@@ -41,6 +41,10 @@ final class HomeViewModel: ObservableObject {
             }
         }
     }
+
+    func favoriteGesture() {
+        print("added")
+    }
 }
 
 extension HomeViewModel {
