@@ -18,19 +18,24 @@ final class HomeViewModel: ObservableObject {
     
     @MainActor
     func getAllCharacters() {
-        guard state != .loading, state != .noMorePages else { return }
+        guard state != .loading,
+              state != .noMorePages else { return }
+
         state = .loading
-        
         Task {
             do {
                 let queryParameters = CharacterQueryParameters(page: nextPageNumber)
                 let data = try await apiService.fetchCharacters(with: queryParameters)
-                
                 let newCharacters = data.toCharacters()
-                characters.append(contentsOf: newCharacters)
-                state = data.info?.isLastPage() == true ? .noMorePages : .idle
                 
-                nextPageNumber += 1
+                characters.append(contentsOf: newCharacters)
+                
+                if data.info?.isLastPage() == true {
+                    state = .noMorePages
+                } else {
+                    state = .idle
+                    nextPageNumber += 1
+                }
             } catch {
                 state = .error(message: error.localizedDescription)
             }
