@@ -4,14 +4,31 @@ struct ContentView: View {
     @StateObject var homeViewModel = HomeViewModel()
     
     var body: some View {
-        List {
-            ForEach(homeViewModel.characters) { character in
-                Text(character.name)
+        NavigationStack {
+            List {
+                ForEach(homeViewModel.characters) { character in
+                    HStack(alignment: .center) {
+                        Text(character.name)
+                        
+                        Spacer()
+                        
+                        AsyncImage(url: URL(string: character.image)) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .clipShape(RoundedRectangle(cornerRadius: 5))
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 50, height: 50)
+                    }
+                }
+                paginationFooter()
             }
-            paginationFooter()
-        }
-        .onAppear {
-            homeViewModel.getAllCharacters()
+            .onAppear {
+                homeViewModel.getAllCharacters()
+            }
+            .navigationTitle("Rick and Morty")
         }
     }
 
